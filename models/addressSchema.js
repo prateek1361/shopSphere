@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const addressSchema = new mongoose.Schema({
-  userId: { type: String, required: true }, 
 
   name: { type: String, required: true },  
   street: { type: String, required: true },

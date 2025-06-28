@@ -1,21 +1,25 @@
 const mongoose = require("mongoose");
 
+const orderItemSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  price: { type: Number, required: true },
+  image: { type: String },
+  qty: { type: Number, default: 1 }
+});
+
+const addressSchema = new mongoose.Schema({
+  name: String,
+  street: String,
+  city: String,
+  state: String,
+  pincode: String
+});
+
 const orderSchema = new mongoose.Schema({
-
-  orderId: { type: String, required: true, unique: true }, 
+  orderId: { type: String, required: true },
   date: { type: Date, default: Date.now },
-
-  address: { type: String, required: true }, 
-
-  items: [
-    {
-      id: { type: String, required: true },    
-      name: { type: String, required: true },
-      qty: { type: Number, required: true },
-      price: { type: Number, required: true },
-      image: { type: String, required: true },
-    }
-  ]
+  address: addressSchema,
+  items: [orderItemSchema],
 });
 
 const Order = mongoose.model("Order", orderSchema);

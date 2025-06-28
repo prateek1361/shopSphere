@@ -116,14 +116,14 @@ app.get("/wishlist", async (req, res) => {
 
 app.post("/wishlist/add", async (req, res) => {
   try {
-    const { userId, productId } = req.body;
-    const existingItem = await Wishlist.findOne({ userId, productId });
+    const { productId } = req.body;
+    const existingItem = await Wishlist.findOne({productId });
 
     if (existingItem) {
       return res.status(400).json({ error: "Product already in wishlist." });
     }
 
-    const newItem = new Wishlist({ userId, productId });
+    const newItem = new Wishlist({productId });
     await newItem.save();
     res.status(201).json(newItem);
   } catch (error) {
@@ -157,14 +157,14 @@ app.get("/cart", async (req, res) => {
 
 app.post("/cart/add", async (req, res) => {
   try {
-    const { userId, productId } = req.body;
-    let item = await Cart.findOne({ userId, productId });
+    const {productId } = req.body;
+    let item = await Cart.findOne({productId });
 
     if (item) {
       item.quantity += 1;
       await item.save();
     } else {
-      item = new Cart({ userId, productId });
+      item = new Cart({productId });
       await item.save();
     }
 
