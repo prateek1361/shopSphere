@@ -102,12 +102,8 @@ app.get("/categories/:categoryId", async (req, res) => {
 
 app.get("/wishlist", async (req, res) => {
   try {
-    const items = await Wishlist.find();
-    if (items.length > 0) {
-      res.json(items);
-    } else {
-      res.status(404).json({ error: "No wishlist items found." });
-    }
+    const items = await Wishlist.find().populate("productId");
+    res.json(items.length ? items : []);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch wishlist items." });
   }
@@ -117,19 +113,20 @@ app.get("/wishlist", async (req, res) => {
 app.post("/wishlist/add", async (req, res) => {
   try {
     const { productId } = req.body;
-    const existingItem = await Wishlist.findOne({productId });
+    const existingItem = await Wishlist.findOne({ productId });
 
     if (existingItem) {
       return res.status(400).json({ error: "Product already in wishlist." });
     }
 
-    const newItem = new Wishlist({productId });
+    const newItem = new Wishlist({ productId });
     await newItem.save();
     res.status(201).json(newItem);
   } catch (error) {
     res.status(500).json({ error: "Failed to add item to wishlist." });
   }
 });
+
 
 
 app.delete("/wishlist/:id", async (req, res) => {
@@ -146,29 +143,32 @@ app.delete("/wishlist/:id", async (req, res) => {
 
 
 
+
+
 app.get("/cart", async (req, res) => {
   try {
-    const items = await Cart.find();
+    const items = await Cart.find().populate("productId");
     res.json(items.length ? items : []);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch cart items." });
   }
 });
 
-app.post("/cart/add", async (req, res) => {
-  try {
-    const {productId } = req.body;
-    let item = await Cart.findOne({productId });
 
-    if (item) {
-      item.quantity += 1;
-      await item.save();
-    } else {
-      item = new Cart({productId });
-      await item.save();
+app.post("/cart/add", async (req, res) => {
+  const { productId } = req.body;
+
+  try {
+    const existingItem = await Cart.findOne({ productId });
+    if (existingItem) {
+      existingItem.quantity += 1;
+      await existingItem.save();
+      return res.status(200).json(existingItem);
     }
 
-    res.status(201).json(item);
+    const newItem = new Cart({ productId });
+    await newItem.save();
+    res.status(201).json(newItem);
   } catch (error) {
     res.status(500).json({ error: "Failed to add to cart." });
   }
@@ -177,13 +177,13 @@ app.post("/cart/add", async (req, res) => {
 
 app.delete("/cart/:id", async (req, res) => {
   try {
-    const deleted = await Cart.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: "Item not found." });
-    res.json({ message: "Removed from cart." });
+    await Cart.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Item removed from cart." });
   } catch (error) {
     res.status(500).json({ error: "Failed to remove from cart." });
   }
 });
+
 
 
 
@@ -224,12 +224,13 @@ app.delete("/addresses/:id", async (req, res) => {
 
 app.get("/orders", async (req, res) => {
   try {
-    const orders = await Order.find();
+    const orders = await Order.find().populate("products.productId");
     res.json(orders.length ? orders : []);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch orders." });
   }
 });
+
 
 
 app.post("/orders/place", async (req, res) => {
@@ -241,6 +242,7 @@ app.post("/orders/place", async (req, res) => {
     res.status(500).json({ error: "Failed to place order." });
   }
 });
+
 
 
 
