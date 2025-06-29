@@ -16,7 +16,7 @@ const addressSchema = new mongoose.Schema({
 });
 
 const orderSchema = new mongoose.Schema({
-  orderId: { type: String, required: true },
+  
   date: { type: Date, default: Date.now },
   address: addressSchema,
   items: [orderItemSchema],
