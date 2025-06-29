@@ -224,7 +224,7 @@ app.delete("/addresses/:id", async (req, res) => {
 
 app.get("/orders", async (req, res) => {
   try {
-    const orders = await Order.find().populate("products.productId");
+    const orders = await Order.find()
     res.json(orders.length ? orders : []);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch orders." });
