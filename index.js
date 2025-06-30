@@ -209,6 +209,18 @@ app.post("/addresses/add", async (req, res) => {
   }
 });
 
+app.post("/addresses/update/:id", async (req, res) => {
+  try {
+    const updated = await Address.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!updated) return res.status(404).json({ error: "Address not found." });
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update address." });
+  }
+});
+
 
 app.delete("/addresses/:id", async (req, res) => {
   try {
