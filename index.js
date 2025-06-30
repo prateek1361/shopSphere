@@ -1,4 +1,5 @@
 const express = require("express")
+const mongoose = require("mongoose")
 const app = express()
 const { initializeDatabase } = require("./db/db.connect");
 const Product = require("./models/productSchema")
@@ -231,16 +232,18 @@ app.get("/orders", async (req, res) => {
   }
 });
 
-
-
-const mongoose = require("mongoose");
-
 app.post("/orders/place", async (req, res) => {
   try {
-    const itemsWithObjectIds = req.body.items.map(item => ({
-      ...item,
-      productId: mongoose.Types.ObjectId(item.productId),
-    }));
+    const itemsWithObjectIds = req.body.items.map(item => {
+      if (!mongoose.Types.ObjectId.isValid(item.productId)) {
+        throw new Error(`Invalid productId: ${item.productId}`);
+      }
+
+      return {
+        ...item,
+        productId: new mongoose.Types.ObjectId(item.productId), // ✅ FIXED
+      };
+    });
 
     const order = new Order({
       items: itemsWithObjectIds,
@@ -255,9 +258,11 @@ app.post("/orders/place", async (req, res) => {
     });
   } catch (error) {
     console.error("Order Save Error:", error.message);
-    res.status(500).json({ error: "Failed to place order." });
+    res.status(400).json({ error: error.message || "Failed to place order." });
   }
 });
+
+
 
 
 
