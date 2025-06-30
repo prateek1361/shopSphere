@@ -233,11 +233,20 @@ app.get("/orders", async (req, res) => {
 
 
 
+const mongoose = require("mongoose");
+
 app.post("/orders/place", async (req, res) => {
   try {
-    console.log("Incoming order payload:", req.body); // 
+    const itemsWithObjectIds = req.body.items.map(item => ({
+      ...item,
+      productId: mongoose.Types.ObjectId(item.productId),
+    }));
 
-    const order = new Order(req.body);
+    const order = new Order({
+      items: itemsWithObjectIds,
+      address: req.body.address,
+    });
+
     const savedOrder = await order.save();
 
     res.status(201).json({
@@ -245,10 +254,11 @@ app.post("/orders/place", async (req, res) => {
       order: savedOrder,
     });
   } catch (error) {
-    console.error("Order Save Error:", error); // 
+    console.error("Order Save Error:", error.message);
     res.status(500).json({ error: "Failed to place order." });
   }
 });
+
 
 
 
