@@ -157,17 +157,17 @@ app.get("/cart", async (req, res) => {
 
 
 app.post("/cart/add", async (req, res) => {
-  const { productId } = req.body;
+  const { productId, quantity = 1 } = req.body;
 
   try {
     const existingItem = await Cart.findOne({ productId });
     if (existingItem) {
-      existingItem.quantity += 1;
+      existingItem.quantity += quantity
       await existingItem.save();
       return res.status(200).json(existingItem);
     }
 
-    const newItem = new Cart({ productId });
+    const newItem = new Cart({ productId, quantity });
     await newItem.save();
     res.status(201).json(newItem);
   } catch (error) {
