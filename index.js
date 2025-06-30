@@ -175,6 +175,32 @@ app.post("/cart/add", async (req, res) => {
   }
 });
 
+app.post("/cart/update/:id", async (req, res) => {
+  const { id } = req.params;
+  const { change } = req.body; // change = +1 or -1
+
+  try {
+    const item = await Cart.findById(id);
+
+    if (!item) {
+      return res.status(404).json({ error: "Cart item not found." });
+    }
+
+    item.quantity += change;
+
+    if (item.quantity <= 0) {
+      await Cart.findByIdAndDelete(id);
+      return res.status(200).json({ message: "Item removed from cart." });
+    }
+
+    await item.save();
+    res.status(200).json({ message: "Quantity updated.", item });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update quantity." });
+  }
+});
+
+
 
 app.delete("/cart/:id", async (req, res) => {
   try {
