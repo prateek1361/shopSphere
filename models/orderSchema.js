@@ -16,6 +16,11 @@ const addressSchema = new mongoose.Schema({
 });
 
 const orderSchema = new mongoose.Schema({
+   orderId: {
+    type: String,
+    required: true,
+    unique: true 
+  },
   items: [orderItemSchema],
   address: addressSchema,
   date: { type: Date, default: Date.now }

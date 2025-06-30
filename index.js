@@ -54,7 +54,7 @@ async function getProductById(productId) {
 }
 app.get("/products/:productId", async (req, res) => {
     try {
-        const products = await getproductsById(req.params.productId);
+        const products = await getProductById(req.params.productId);
         res.json(products)
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch products." });
@@ -94,7 +94,7 @@ async function getCategoryById(categoryId) {
 }
 app.get("/categories/:categoryId", async (req, res) => {
     try {
-        const categories = await getcategoriesById(req.params.categoryId);
+        const categories = await getCategoryById(req.params.categoryId);
         res.json(categories)
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch categories." });
@@ -221,7 +221,7 @@ app.delete("/addresses/:id", async (req, res) => {
 });
 
 
-
+const { v4: uuidv4 } = require("uuid");
 
 app.get("/orders", async (req, res) => {
   try {
@@ -246,6 +246,7 @@ app.post("/orders/place", async (req, res) => {
     });
 
     const order = new Order({
+       orderId: uuidv4(),
       items: itemsWithObjectIds,
       address: req.body.address,
     });
