@@ -6,9 +6,6 @@ const orderItemSchema = new mongoose.Schema({
   category: String,
   price: Number,
   image: String,
-  rating: String,
-  description: String,
-  topDeal: Boolean,
   qty: { type: Number, default: 1 }
 });
 
