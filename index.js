@@ -235,15 +235,17 @@ app.get("/orders", async (req, res) => {
 
 app.post("/orders/place", async (req, res) => {
   try {
+    console.log("Incoming order payload:", req.body); // 
+
     const order = new Order(req.body);
     const savedOrder = await order.save();
 
     res.status(201).json({
       message: "Order placed successfully",
-      order: savedOrder, 
+      order: savedOrder,
     });
   } catch (error) {
-    console.error("Order Save Error:", error);
+    console.error("Order Save Error:", error); // 
     res.status(500).json({ error: "Failed to place order." });
   }
 });
