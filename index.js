@@ -239,6 +239,7 @@ app.post("/orders/place", async (req, res) => {
     await order.save();
     res.status(201).json(order);
   } catch (error) {
+    console.error("Order Save Error:", error);
     res.status(500).json({ error: "Failed to place order." });
   }
 });
