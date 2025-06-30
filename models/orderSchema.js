@@ -1,25 +1,30 @@
 const mongoose = require("mongoose");
 
 const orderItemSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-  image: { type: String },
-  qty: { type: Number, required: true, default: 1 }
+  productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+  name: String,
+  category: String,
+  price: Number,
+  image: String,
+  rating: String,
+  description: String,
+  topDeal: Boolean,
+  qty: { type: Number, default: 1 }
 });
 
 const addressSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  street: { type: String, required: true },
-  city: { type: String, required: true },
-  pincode: { type: String, required: true }
+  name: String,
+  street: String,
+  city: String,
+  pincode: String
 });
 
 const orderSchema = new mongoose.Schema({
-  items: { type: [orderItemSchema], required: true },
-  address: { type: addressSchema, required: true },
+  items: [orderItemSchema],
+  address: addressSchema,
   date: { type: Date, default: Date.now }
 }, {
-  timestamps: true // optional: adds createdAt & updatedAt
+  timestamps: true
 });
 
 const Order = mongoose.model("Order", orderSchema);
