@@ -253,6 +253,8 @@ app.post("/orders/place", async (req, res) => {
 
     const savedOrder = await order.save();
 
+    await Cart.deleteMany({});
+
     res.status(201).json({
       message: "Order placed successfully",
       order: savedOrder,
